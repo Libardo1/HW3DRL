@@ -126,9 +126,22 @@ def learn(env,
     # q_func_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='q_func')
     # Older versions of TensorFlow may require using "VARIABLES" instead of "GLOBAL_VARIABLES"
     ######
-    
-    # YOUR CODE HERE
 
+    # YOUR CODE HERE
+    target_q = q_func(obs_tp1_float,
+                      num_actions,
+                      scope="target_q",
+                      reuse=False)
+    target_q_func_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES,
+                                           scope='target_q')
+    target = rew_t_ph + gamma * tf.reduce_max(target_q)
+    predic_q = q_func(obs_t_float,
+                      num_actions,
+                      scope="predic_q",
+                      reuse=False)
+    q_func_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES,
+                                    scope='predic_q')
+    total_error = tf.reduce_mean(tf.square(target - predic_q))
     ######
 
     # construct optimization op (with gradient clipping)
